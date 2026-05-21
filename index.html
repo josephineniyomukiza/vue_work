@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application Dashboard</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8e8e8;
+            padding: 20px;
+            color: #000000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 2px solid #000000;
+        }
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: #e0e0e0;
+            border-bottom: 2px solid #000000;
+        }
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            background: #e0e0e0;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: #000000;
+            border-right: 1px solid #000000;
+        }
+        .tab.active {
+            background: #c0c0c0;
+            color: #000000;
+            border-bottom: 3px solid #000000;
+        }
+        .tab:hover:not(.active) {
+            background: #d0d0d0;
+        }
+        .content {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #000000;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: 2px solid #000000;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #000000;
+            background: white;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #000000;
+            background: #fffff0;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .radio-group label {
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #000000;
+        }
+        button {
+            background: #cccccc;
+            color: #000000;
+            padding: 12px 30px;
+            border: 2px solid #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #aaaaaa;
+            transform: scale(1.02);
+        }
+        .success {
+            background: #dddddd;
+            color: #000000;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 2px solid #000000;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 2px solid #000000;
+            padding: 12px;
+            text-align: left;
+            color: #000000;
+        }
+        th {
+            background: #cccccc;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #eeeeee;
+        }
+        tr:nth-child(odd) {
+            background: white;
+        }
+        .placeholder {
+            text-align: center;
+            padding: 50px;
+            color: #000000;
+            font-size: 18px;
+            border: 2px solid #000000;
+            background: #f9f9f9;
+            font-weight: bold;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #000000;
+            border-left: 5px solid #000000;
+            padding-left: 15px;
+        }
+        @media (max-width: 768px) {
+            .tab {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            .content {
+                padding: 20px;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button 
+                    v-for="tab in tabs" 
+                    :key="tab"
+                    @click="currentTab = tab"
+                    class="tab"
+                    :class="{ active: currentTab === tab }"
+                >
+                    {{ tab }}
+                </button>
+            </div>
+
+            <!-- Applicant Form Tab -->
+            <div v-if="currentTab === 'Applicant Form'" class="content">
+                <h2>📝 Applicant Registration Form</h2>
+                <form @submit.prevent="submitApplication">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" v-model="form.firstname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Surname *</label>
+                        <input type="text" v-model="form.surname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" v-model="form.dob" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address *</label>
+                        <textarea v-model="form.address" rows="3" required placeholder="Full address..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" v-model="form.phone" required placeholder="+250...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" value="Male" v-model="form.gender"> Male</label>
+                            <label><input type="radio" value="Female" v-model="form.gender"> Female</label>
+                            <label><input type="radio" value="Other" v-model="form.gender"> Other</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>National ID *</label>
+                        <input type="text" v-model="form.nationalId" required placeholder="XXXXXXXXXXXXXX">
+                    </div>
+
+                    <button type="submit">✅ Submit Application</button>
+                </form>
+
+                <div v-if="successMessage" class="success">
+                    {{ successMessage }}
+                </div>
+            </div>
+
+            <!-- Administrator Dashboard Tab -->
+            <div v-else-if="currentTab === 'Administrator Dashboard'" class="content">
+                <h2>📊 All Submitted Applications</h2>
+                
+                <div v-if="applications.length === 0" class="placeholder">
+                    📭 No applications submitted yet
+                </div>
+
+                <div v-else>
+                    <p style="margin-bottom: 15px; font-weight: bold; color: #000000;">
+                        Total applications: <strong>{{ applications.length }}</strong>
+                    </p>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>First Name</th>
+                                    <th>Surname</th>
+                                    <th>DOB</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Gender</th>
+                                    <th>National ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(app, index) in applications" :key="index">
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ app.firstname }}</td>
+                                    <td>{{ app.surname }}</td>
+                                    <td>{{ app.dob }}</td>
+                                    <td>{{ app.address }}</td>
+                                    <td>{{ app.phone }}</td>
+                                    <td>{{ app.gender }}</td>
+                                    <td>{{ app.nationalId }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                const tabs = ['Applicant Form', 'Administrator Dashboard'];
+                const currentTab = ref('Applicant Form');
+                const applications = ref([]);
+                const successMessage = ref('');
+                
+                const form = ref({
+                    firstname: '',
+                    surname: '',
+                    dob: '',
+                    address: '',
+                    phone: '',
+                    gender: '',
+                    nationalId: ''
+                });
+                
+                const submitApplication = () => {
+                    applications.value.push({ ...form.value });
+                    successMessage.value = '✓ Application submitted successfully!';
+                    
+                    form.value = {
+                        firstname: '',
+                        surname: '',
+                        dob: '',
+                        address: '',
+                        phone: '',
+                        gender: '',
+                        nationalId: ''
+                    };
+                    
+                    setTimeout(() => {
+                        successMessage.value = '';
+                    }, 3000);
+                };
+                
+                return {
+                    tabs,
+                    currentTab,
+                    applications,
+                    form,
+                    successMessage,
+                    submitApplication
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
